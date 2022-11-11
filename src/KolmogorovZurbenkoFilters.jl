@@ -1,5 +1,7 @@
 module KolmogorovZurbenkoFilters
+using Statistics
 
-# Write your package code here.
+include("kza.jl")
+export kz, kza
 
 end
