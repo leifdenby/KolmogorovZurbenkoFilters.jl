@@ -9,12 +9,7 @@ function R_differenced(y::Vector{T}, q::Int) where T
 	# calculate d = |Z(i+q) - Z(i-q)|
     #R: for (i=0; i<q; i++) {REAL(d)[i] = fabs(REAL(y)[i+q] - REAL(y)[0]);}
 	for i in 1:q
-        try
-            d[i] = abs(y[i+q] - y[1])
-        catch
-            @info i q
-            throw("lol")
-        end
+        d[i] = abs(y[i+q] - y[1])
     end
     #R: for (i=q; i<n-q; i++) {REAL(d)[i] = fabs(REAL(y)[i+q] - REAL(y)[i-q]);}
 	for i in q+1:n-q
@@ -32,33 +27,6 @@ function R_differenced(y::Vector{T}, q::Int) where T
     end
 	dprime[n] = dprime[n-1]
     return d, dprime
-end
-
-
-"""
-compute moving average value for array `v` at index `col` with window `w`
-skipping any `missing` values in `v`
-"""
-function mavg1d(v::Vector{T}, col::Int, w::Int) where T
-    s::T = 0.0
-    z = 0
-
-    startcol = col-w>1 ? col-w : 1
-    endcol = col+w<length(v) ? col+w : length(v)
-
-    #@show col w startcol endcol
-    
-    for i in startcol:endcol
-        if !ismissing(v[i])
-            z += 1
-            s += v[i]
-        end
-    end
-    if (z == 0)
-        return missing
-    else
-        return s/z
-    end
 end
 
 
@@ -126,20 +94,4 @@ function kza(v::Vector{T}, window::Integer; iterations=3, minimum_window_length=
         tmp[:] = ans[:]
     end
 	return ans
-end
-
-"""
-Apply Kolmogorov-Zurbenko filter to Vector `x` with `window` over `iterations`
-"""
-function kz(x::Vector{T}, window::Int; iterations::Int=3) where T
-    ans = Vector{T}(undef, length(x))
-    tmp = copy(x)
-    
-    for k in 1:iterations
-        for i in 1:length(x)
-            ans[i] = mavg1d(tmp, i, window)
-        end
-        tmp[:] = ans[:]
-    end
-    return ans
 end
