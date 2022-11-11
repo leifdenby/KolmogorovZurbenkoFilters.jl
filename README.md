@@ -41,6 +41,8 @@ plot!(y_kza, label="KZA applied to y", linewidth=2)
 savefig("examples/1d.png")
 ```
 
+![](examples/1d.png)
+
 ## TODO
 
 - [x] implement `kz` and `kza` in 1D
